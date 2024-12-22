@@ -1,39 +1,46 @@
-name: Android CI
+name: Build and Upload APK
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-apk:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-    # Bước checkout mã nguồn
-    - name: Checkout repository
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Thiết lập JDK 21
-    - name: Set up JDK 21
+    - name: Setup JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '21'
-        distribution: 'temurin'
+        distribution: 'zulu'
+        java-version: '17'
 
-    # Cấp quyền thực thi cho tệp gradlew
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 35
+        build-tools: '35.0.0'
+        ndk: '25.2.9519653'
 
-    # Xây dựng ứng dụng bằng Gradle
-    - name: Build with Gradle
-      run: ./gradlew app:assembleRelease
+    - name: Cache Gradle
+      uses: actions/cache@v3
+      with:
+        path: ~/.gradle/caches
+        key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          gradle-cache-${{ runner.os }}-
 
-    # Đổi tên tệp APK unsigned
-    - name: Rename unsigned APK
-      run: mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/KTA_Faker.apk
+    - name: Make Gradlew Executable
+      run: chmod +x ./gradlew # Gán quyền thực thi cho gradlew
 
-    # Tải lên artifact APK
-    - name: Upload unsigned APK
+    - name: Build APK
+      run: ./gradlew assembleRelease
+
+    - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
-        name: KTA_Faker.apk
-        path: app/build/outputs/apk/release/KTA_Faker.apk
+        name: Built-APK
+        path: app/build/outputs/apk/release/*.apk

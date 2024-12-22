@@ -1,2 +1,1 @@
-balti.xposed.pixelifygooglephotos.FeatureSpoofer
-balti.xposed.pixelifygooglephotos.DeviceSpoofer
+com.hujiayucc.hook.hook.HookEntry_YukiHookXposedInit
