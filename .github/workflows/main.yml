@@ -1,0 +1,52 @@
+name: Android APK Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Set up JDK
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    # Cache Gradle
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    # Set up Android SDK
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+      with:
+        api-level: 33
+        build-tools: 33.0.0
+        target: android-33
+
+    # Build the APK
+    - name: Build APK
+      run: ./gradlew assembleRelease
+
+    # Upload APK artifact
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-release-unsigned.apk
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
