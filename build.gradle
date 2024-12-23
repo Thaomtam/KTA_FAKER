@@ -1,0 +1,28 @@
+
+        plugins {
+            id 'com.android.library'
+            id 'kotlin-android'
+        }
+
+        android {
+            compileSdkVersion 33
+
+            defaultConfig {
+                minSdkVersion 21
+                targetSdkVersion 33
+                versionCode 1
+                versionName "1.0"
+            }
+
+            buildTypes {
+                release {
+                    minifyEnabled false
+                }
+            }
+        }
+
+        dependencies {
+            implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
+            implementation "com.highcapable.yukihookapi:yukihookapi:1.0.0"
+        }
+    
