@@ -23,7 +23,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    # Cache Gradle
+    # Grant permissions for gradlew
+    - name: Grant execute permissions for gradlew
+      run: chmod +x ./gradlew
+
+    # Cache Gradle dependencies
     - name: Cache Gradle dependencies
       uses: actions/cache@v3
       with:
